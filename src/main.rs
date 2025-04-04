@@ -63,8 +63,7 @@ where
         .args(vec![
             "build",
             "run",
-            "--",
-            format!("{}", std::any::type_name::<T>()).as_str(),
+            format!("-DUserType={}", std::any::type_name::<T>()).as_str(),
         ])
         .output()
         .unwrap();
