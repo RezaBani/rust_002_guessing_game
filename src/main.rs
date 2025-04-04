@@ -13,12 +13,32 @@ fn main() {
 
         let guess: NumberType = match guess.trim().parse() {
             Ok(num) => num,
-            Err(_) => {
-                if guess.trim().to_lowercase() == "q" {
-                    break;
+            Err(err) => match err.kind() {
+                std::num::IntErrorKind::PosOverflow => {
+                    println!(
+                        "Input is too big, max allowed number is: {} . Please try again:",
+                        NumberType::MAX
+                    );
+                    continue;
                 }
-                continue;
-            }
+                std::num::IntErrorKind::NegOverflow => {
+                    println!(
+                        "Input is too small, min allowed number is: {} . Please try again:",
+                        NumberType::MIN
+                    );
+                    continue;
+                }
+                std::num::IntErrorKind::InvalidDigit
+                | std::num::IntErrorKind::Zero
+                | std::num::IntErrorKind::Empty
+                | _ => {
+                    if guess.trim().to_lowercase() == "q" {
+                        break;
+                    }
+                    println!("Input is not valid. Please try again:");
+                    continue;
+                }
+            },
         };
 
         match guess.cmp(&secret_number) {
